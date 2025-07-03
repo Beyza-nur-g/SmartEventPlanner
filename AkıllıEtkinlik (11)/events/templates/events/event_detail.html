@@ -1,0 +1,322 @@
+<!-- event_detail.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+    <title>{{ event.name }}</title>
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #1e3c72, #2a5298);
+            color: #ffffff;
+            margin: 0;
+            padding: 0;
+            overflow-x: hidden;
+        }
+        .floating-navbar {
+            background: rgba(0, 0, 0, 0.6);
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+            padding: 1rem 2rem;
+            position: fixed;
+            top: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 100;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-radius: 50px;
+            backdrop-filter: blur(15px);
+            width: 80%;
+        }
+        .navbar-logo {
+            font-size: 2.5rem;
+            color: #ffcc00;
+            font-weight: bold;
+            text-decoration: none;
+            transition: transform 0.4s;
+        }
+        .navbar-logo:hover {
+            transform: scale(1.2);
+        }
+        .menu-items {
+            display: flex;
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+        .menu-items li {
+            margin: 0 1.5rem;
+            transition: transform 0.4s;
+            position: relative;
+        }
+        .menu-items li:hover {
+            transform: translateY(-8px);
+        }
+        .menu-items li a {
+            color: #ffffff;
+            text-decoration: none;
+            font-size: 1.3rem;
+            padding: 0.6rem 1.2rem;
+            border-radius: 30px;
+            transition: background-color 0.4s, color 0.4s;
+        }
+        .menu-items li a:hover {
+            background-color: #ffcc00;
+            color: #000000;
+        }
+        .dropdown {
+            display: none;
+            position: absolute;
+            top: 100%;
+            left: 0;
+            background-color: rgba(0, 0, 0, 0.8);
+            border-radius: 15px;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+            padding: 1rem;
+            z-index: 101;
+        }
+        .menu-items li:hover .dropdown {
+            display: block;
+        }
+        .dropdown a {
+            display: block;
+            color: #ffffff;
+            text-decoration: none;
+            padding: 0.5rem 1rem;
+            border-radius: 10px;
+            transition: background-color 0.3s, color 0.3s;
+        }
+        .dropdown a:hover {
+            background-color: #ffcc00;
+            color: #000000;
+        }
+        .navbar-toggle {
+            display: none;
+        }
+        @media (max-width: 768px) {
+            .menu-items {
+                display: none;
+                flex-direction: column;
+                background-color: rgba(0, 0, 0, 0.8);
+                width: 100%;
+                position: absolute;
+                top: 5rem;
+                left: 0;
+                z-index: 99;
+                border-radius: 15px;
+            }
+            .menu-items li {
+                margin: 1rem 0;
+                text-align: center;
+            }
+            .navbar-toggle {
+                display: block;
+                color: #ffffff;
+                font-size: 2rem;
+                cursor: pointer;
+            }
+            .floating-navbar .menu-items.active {
+                display: flex;
+            }
+        }
+        .event-detail-section {
+            text-align: center;
+            margin-top: 10rem;
+            padding: 2rem;
+        }
+        .event-detail-section h1 {
+            font-size: 3rem;
+            color: #ffcc00;
+            margin-bottom: 1.5rem;
+            font-family: 'Poppins', sans-serif;
+        }
+        .event-detail-section p {
+            font-size: 1.3rem;
+            margin-bottom: 1rem;
+            color: #ffffff;
+        }
+        .participation-form {
+            margin: 2rem 0;
+        }
+        .participation-form button {
+            background-color: #ffcc00;
+            color: #000;
+            border: none;
+            padding: 1rem 2rem;
+            border-radius: 25px;
+            font-size: 1.2rem;
+            cursor: pointer;
+            transition: background-color 0.3s, transform 0.3s;
+        }
+        .participation-form button:hover {
+            background-color: #e6b800;
+            transform: scale(1.05);
+        }
+        .comments-section {
+            margin-top: 4rem;
+            padding: 2rem;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            max-width: 70%;
+            margin-left: auto;
+            margin-right: auto;
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+        }
+        .comments-section h3 {
+            font-size: 2rem;
+            color: #ffcc00;
+            margin-bottom: 1.5rem;
+        }
+        .comments-section ul {
+            list-style: none;
+            padding: 0;
+        }
+        .comments-section li {
+            display: flex;
+            align-items: center;
+            background: linear-gradient(145deg, #ffffff, #e6e6e6);
+            padding: 1rem;
+            margin-bottom: 1rem;
+            border-radius: 10px;
+            color: #1e3c72;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s;
+        }
+        .comments-section li:hover {
+            transform: scale(1.05);
+        }
+        .comments-section li img {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            margin-right: 1rem;
+            object-fit: cover;
+            transition: transform 0.3s;
+        }
+        .comments-section li img:hover {
+            transform: scale(1.2);
+        }
+        .comments-section .comment-username {
+            font-weight: bold;
+            color: #ff6600;
+            margin-right: 0.5rem;
+        }
+        .comment-form {
+            margin-top: 2rem;
+        }
+        .comment-form textarea {
+            width: 100%;
+            padding: 1rem;
+            border-radius: 15px;
+            border: none;
+            resize: none;
+            font-family: 'Poppins', sans-serif;
+        }
+        .comment-form button {
+            background-color: #ffcc00;
+            color: #000;
+            border: none;
+            padding: 0.8rem 2rem;
+            border-radius: 25px;
+            font-size: 1.2rem;
+            cursor: pointer;
+            margin-top: 1rem;
+            transition: background-color 0.3s, transform 0.3s;
+        }
+        .comment-form button:hover {
+            background-color: #e6b800;
+            transform: scale(1.05);
+        }
+        .links-section {
+            margin-top: 3rem;
+            text-align: center;
+        }
+        .links-section a {
+            color: #ffcc00;
+            font-size: 1.3rem;
+            text-decoration: none;
+            margin: 0 1.5rem;
+            transition: color 0.3s;
+        }
+        .links-section a:hover {
+            color: #ffffff;
+        }
+    </style>
+    <script>
+        function toggleMenu() {
+            const menu = document.querySelector('.menu-items');
+            menu.classList.toggle('active');
+        }
+    </script>
+</head>
+<body>
+    <!-- Navbar section -->
+    <div class="floating-navbar">
+        <a href="{% url 'homepage' %}" class="navbar-logo">✨ Akıllı Etkinlik Platformu</a>
+        <div class="navbar-toggle" onclick="toggleMenu()">
+            &#9776;
+        </div>
+        <ul class="menu-items">
+            <li><a href="{% url 'profile' request.user.id %}" class="active">Profilim</a></li>
+            <li>
+                <a href="#">Etkinlikler</a>
+                <div class="dropdown">
+                    <a href="{% url 'event_list' %}">Tüm Etkinlikler</a>
+                    <a href="{% url 'my_events' %}">Etkinliklerim</a>
+                </div>
+            </li>
+            <li><a href="#">Chat</a></li>
+            <li><a href="{% url 'logout' %}">Çıkış Yap</a></li>
+        </ul>
+    </div>
+
+    <!-- Event Detail Section -->
+    <div class="event-detail-section">
+        <h1>{{ event.name }}</h1>
+        <p>Açıklama: {{ event.description }}</p>
+        <p>Tarih: {{ event.date }}</p>
+        <p>Yer: {{ event.location }}</p>
+        <p>Kategori: {{ event.category }}</p>
+
+        <div class="participation-form">
+            <form method="post">
+                {% csrf_token %}
+                {% if is_participating %}
+                    <button type="submit" name="remove_participation">Etkinlikten Çık</button>
+                {% else %}
+                    <button type="submit" name="add_participation">Etkinliğe Katıl</button>
+                {% endif %}
+            </form>
+        </div>
+    </div>
+
+    <!-- Comments Section -->
+    <div class="comments-section">
+        <h3>Yorumlar:</h3>
+        <ul>
+            {% for message in messages_list %}
+            <li>
+                <img src="{{ message.sender.profile_image.url }}">
+                <span class="comment-username">{{ message.sender.username }}</span>: {{ message.text }} ({{ message.timestamp }})
+            </li>
+            {% endfor %}
+        </ul>
+        <div class="comment-form">
+            <form method="post">
+                {% csrf_token %}
+                <textarea name="message" placeholder="Yorum yap..."></textarea><br>
+                <button type="submit" name="add_message">Yorum Ekle</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Links Section -->
+    <div class="links-section">
+        <a href="{% url 'event_list' %}">Tüm Etkinlikler</a>
+        <a href="{% url 'my_events' %}">Etkinliklerim</a>
+    </div>
+</body>
+</html>

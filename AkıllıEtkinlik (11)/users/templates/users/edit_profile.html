@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profilim</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(to bottom right, #1e3c72, #2a5298);
+            color: #ffffff;
+            margin: 0;
+            padding: 0;
+            overflow-x: hidden;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .floating-navbar {
+            background: rgba(0, 0, 0, 0.7);
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.4);
+            padding: 1rem 2rem;
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 100;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-radius: 50px;
+            backdrop-filter: blur(15px);
+            width: 90%;
+        }
+        .navbar-logo {
+            font-size: 2rem;
+            color: #ffcc00;
+            font-weight: bold;
+            text-decoration: none;
+            transition: transform 0.3s;
+        }
+        .navbar-logo:hover {
+            transform: scale(1.1);
+        }
+        .menu-items {
+            display: flex;
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+        .menu-items li {
+            margin: 0 1rem;
+            transition: transform 0.3s;
+            position: relative;
+        }
+        .menu-items li:hover {
+            transform: translateY(-5px);
+        }
+        .menu-items li a {
+            color: #ffffff;
+            text-decoration: none;
+            font-size: 1.2rem;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            transition: background-color 0.3s, color 0.3s;
+        }
+        .menu-items li a:hover {
+            background-color: #ffcc00;
+            color: #000000;
+        }
+        .dropdown {
+            display: none;
+            position: absolute;
+            top: 100%;
+            left: 0;
+            background-color: rgba(0, 0, 0, 0.9);
+            border-radius: 10px;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.5);
+            padding: 1rem;
+            z-index: 101;
+        }
+        .menu-items li:hover .dropdown {
+            display: block;
+        }
+        .dropdown a {
+            display: block;
+            color: #ffffff;
+            text-decoration: none;
+            padding: 0.5rem 1rem;
+            border-radius: 10px;
+            transition: background-color 0.3s, color 0.3s;
+        }
+        .dropdown a:hover {
+            background-color: #ffcc00;
+            color: #000000;
+        }
+        .navbar-toggle {
+            display: none;
+        }
+        @media (max-width: 768px) {
+            .menu-items {
+                display: none;
+                flex-direction: column;
+                background-color: rgba(0, 0, 0, 0.9);
+                width: 100%;
+                position: absolute;
+                top: 4rem;
+                left: 0;
+                z-index: 99;
+                border-radius: 15px;
+            }
+            .menu-items li {
+                margin: 1rem 0;
+                text-align: center;
+            }
+            .navbar-toggle {
+                display: block;
+                color: #ffffff;
+                font-size: 2rem;
+                cursor: pointer;
+            }
+            .floating-navbar .menu-items.active {
+                display: flex;
+            }
+        }
+        .edit-profile-container {
+            max-width: 700px;
+            margin-top: 12rem;
+            padding: 2.5rem;
+            background: rgba(255, 255, 255, 0.15);
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+            text-align: center;
+            backdrop-filter: blur(10px);
+        }
+        .edit-profile-container h1 {
+            font-size: 2.5rem;
+            color: #ffcc00;
+            margin-bottom: 2.5rem;
+        }
+        .edit-profile-container form {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+        .edit-profile-container input[type="file"],
+        .edit-profile-container input[type="text"],
+        .edit-profile-container input[type="email"],
+        .edit-profile-container input[type="password"],
+        .edit-profile-container textarea {
+            width: 100%;
+            padding: 0.8rem;
+            border-radius: 10px;
+            border: none;
+            outline: none;
+            font-size: 1rem;
+            background: rgba(255, 255, 255, 0.2);
+            color: #ffffff;
+        }
+        .edit-profile-container input::placeholder,
+        .edit-profile-container textarea::placeholder {
+            color: #cccccc;
+        }
+        .edit-profile-container button[type="submit"] {
+            background-color: #ffcc00;
+            color: #1e3c72;
+            font-size: 1.4rem;
+            font-weight: bold;
+            padding: 0.8rem 2rem;
+            border-radius: 30px;
+            border: none;
+            cursor: pointer;
+            transition: transform 0.4s, background-color 0.3s;
+        }
+        .edit-profile-container button[type="submit"]:hover {
+            background-color: #e6b800;
+            transform: scale(1.05);
+        }
+        .edit-profile-container .messages {
+            margin-top: 2rem;
+            list-style: none;
+            padding: 0;
+        }
+        .edit-profile-container .messages li {
+            background: linear-gradient(145deg, #ffcccc, #ff9999);
+            padding: 1rem;
+            margin-bottom: 1rem;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+        }
+        .btn-back {
+            display: inline-block;
+            margin-top: 2rem;
+            background-color: #ffcc00;
+            color: #1e3c72;
+            font-size: 1.2rem;
+            font-weight: bold;
+            padding: 0.8rem 1.5rem;
+            border-radius: 20px;
+            text-decoration: none;
+            transition: background-color 0.3s, transform 0.3s;
+        }
+        .btn-back:hover {
+            background-color: #e6b800;
+            transform: scale(1.05);
+        }
+    </style>
+</head>
+<body>
+    <!-- Navbar section -->
+    <div class="floating-navbar">
+        <a href="#" class="navbar-logo">✨ Akıllı Etkinlik Platformu</a>
+        <ul class="menu-items">
+            <li><a href="{% url 'homepage' %}">Anasayfa</a></li>
+            <li>
+                <a href="#">Etkinlikler</a>
+                <div class="dropdown">
+                    <a href="{% url 'event_list' %}">Tüm Etkinlikler</a>
+                    <a href="{% url 'my_events' %}">Etkinliklerim</a>
+                </div>
+            </li>
+            <li><a href="#">Chat</a></li>
+            <li><a href="{% url 'logout' %}">Çıkış Yap</a></li>
+        </ul>
+    </div>
+
+    <!-- Edit Profile Section -->
+    <div class="edit-profile-container">
+        <h1>Profil Bilgilerini Güncelle</h1>
+        <form method="post" enctype="multipart/form-data" action="">
+            
+            <div class="profile-picture-info">
+                <p><strong>Mevcut Profil Fotoğrafı:</strong></p>
+                {% if user.profile_picture %}
+                    <img src="{{ user.profile_picture.url }}" alt="Profil Fotoğrafı" style="width: 150px; height: 150px; border-radius: 50%; margin-top: 1rem;">
+                {% else %}
+                    <p>Henüz profil fotoğrafı eklenmedi.</p>
+                {% endif %}
+                <br>
+            </div>
+            
+            {% csrf_token %}
+            {{ form.as_p }}
+            <button type="submit">Güncelle</button>
+        </form>
+        <a href="{% url 'profile' user.id %}" class="btn-back">Profilime Geri Dön</a>
+        {% if messages %}
+            <ul class="messages">
+                {% for message in messages %}
+                    <li>{{ message }}</li>
+                {% endfor %}
+            </ul>
+        {% endif %}
+    </div>
+</body>
+</html>

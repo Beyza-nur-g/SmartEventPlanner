@@ -1,0 +1,272 @@
+<!-- event_list.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+    <title>Tüm Etkinlikler</title>
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #1e3c72, #2a5298);
+            color: #ffffff;
+            margin: 0;
+            padding: 0;
+            overflow-x: hidden;
+        }
+        .floating-navbar {
+            background: rgba(0, 0, 0, 0.6);
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+            padding: 1rem 2rem;
+            position: fixed;
+            top: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 100;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-radius: 50px;
+            backdrop-filter: blur(15px);
+            width: 80%;
+        }
+        .navbar-logo {
+            font-size: 2.5rem;
+            color: #ffcc00;
+            font-weight: bold;
+            text-decoration: none;
+            transition: transform 0.4s;
+        }
+        .navbar-logo:hover {
+            transform: scale(1.2);
+        }
+        .menu-items {
+            display: flex;
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+        .menu-items li {
+            margin: 0 1.5rem;
+            transition: transform 0.4s;
+            position: relative;
+        }
+        .menu-items li:hover {
+            transform: translateY(-8px);
+        }
+        .menu-items li a {
+            color: #ffffff;
+            text-decoration: none;
+            font-size: 1.3rem;
+            padding: 0.6rem 1.2rem;
+            border-radius: 30px;
+            transition: background-color 0.4s, color 0.4s;
+        }
+        .menu-items li a:hover {
+            background-color: #ffcc00;
+            color: #000000;
+        }
+        .dropdown {
+            display: none;
+            position: absolute;
+            top: 100%;
+            left: 0;
+            background-color: rgba(0, 0, 0, 0.8);
+            border-radius: 15px;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+            padding: 1rem;
+            z-index: 101;
+        }
+        .menu-items li:hover .dropdown {
+            display: block;
+        }
+        .dropdown a {
+            display: block;
+            color: #ffffff;
+            text-decoration: none;
+            padding: 0.5rem 1rem;
+            border-radius: 10px;
+            transition: background-color 0.3s, color 0.3s;
+        }
+        .dropdown a:hover {
+            background-color: #ffcc00;
+            color: #000000;
+        }
+        .navbar-toggle {
+            display: none;
+        }
+        @media (max-width: 768px) {
+            .menu-items {
+                display: none;
+                flex-direction: column;
+                background-color: rgba(0, 0, 0, 0.8);
+                width: 100%;
+                position: absolute;
+                top: 5rem;
+                left: 0;
+                z-index: 99;
+                border-radius: 15px;
+            }
+            .menu-items li {
+                margin: 1rem 0;
+                text-align: center;
+            }
+            .navbar-toggle {
+                display: block;
+                color: #ffffff;
+                font-size: 2rem;
+                cursor: pointer;
+            }
+            .floating-navbar .menu-items.active {
+                display: flex;
+            }
+        }
+        .event-section {
+            text-align: center;
+            margin-top: 10rem;
+            padding: 2rem;
+        }
+        .event-section h2 {
+            font-size: 3rem;
+            color: #ffcc00;
+            margin-bottom: 2rem;
+            font-family: 'Poppins', sans-serif;
+        }
+        .event-list {
+            max-width: 70%;
+            margin: 0 auto;
+            padding: 2rem;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+        }
+        .event-list ul {
+            list-style: none;
+            padding: 0;
+        }
+        .event-list li {
+            background: linear-gradient(145deg, #ffffff, #e6e6e6);
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            border-radius: 15px;
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2);
+            transition: transform 0.3s;
+        }
+        .event-list li:hover {
+            transform: scale(1.05);
+        }
+        .event-list a {
+            color: #1e3c72;
+            font-size: 1.5rem;
+            font-weight: bold;
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+        .event-list a:hover {
+            color: #ffcc00;
+        }
+        .event-list p {
+            color: #333;
+            font-size: 1rem;
+            margin-top: 0.5rem;
+        }
+        .event-carousel {
+            display: flex;
+            gap: 2rem;
+            overflow-x: auto;
+            scroll-behavior: smooth;
+            padding: 3rem;
+            margin: 2rem auto;
+            max-width: 70%;
+        }
+        .event-carousel::-webkit-scrollbar {
+            height: 10px;
+        }
+        .event-carousel::-webkit-scrollbar-thumb {
+            background-color: #ffcc00;
+            border-radius: 10px;
+        }
+        .event-card {
+            background: linear-gradient(145deg, #ffffff, #e6e6e6);
+            padding: 2rem;
+            border-radius: 25px;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.2);
+            width: calc(25% - 1rem);
+            transition: transform 0.4s;
+            flex: 0 0 auto;
+        }
+        .event-card:hover {
+            transform: scale(1.1);
+        }
+        .event-card h3 {
+            color: #1e3c72;
+            font-size: 1.5rem;
+        }
+        .event-card p {
+            color: #333;
+            font-size: 1rem;
+        }
+        @media (max-width: 1024px) {
+            .event-card {
+                width: calc(40% - 1rem);
+            }
+        }
+        @media (max-width: 768px) {
+            .event-card {
+                width: calc(90% - 1rem);
+            }
+        }
+        #map {
+            height: 500px;
+            width: 70%;
+            margin: 3rem auto;
+            border-radius: 20px;
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
+        }
+    </style>
+    <script>
+        function toggleMenu() {
+            const menu = document.querySelector('.menu-items');
+            menu.classList.toggle('active');
+        }
+    </script>
+</head>
+<body>
+    <!-- Navbar section -->
+    <div class="floating-navbar">
+        <a href="{% url 'homepage' %}" class="navbar-logo">✨ Akıllı Etkinlik Platformu</a>
+        <div class="navbar-toggle" onclick="toggleMenu()">
+            &#9776;
+        </div>
+        <ul class="menu-items">
+            <li><a href="{% url 'profile' request.user.id %}" class="active">Profilim</a></li>
+            <li>
+                <a href="#">Etkinlikler</a>
+                <div class="dropdown">
+                    <a href="{% url 'event_list' %}">Tüm Etkinlikler</a>
+                    <a href="{% url 'my_events' %}">Etkinliklerim</a>
+                </div>
+            </li>
+            <li><a href="#">Chat</a></li>
+            <li><a href="{% url 'logout' %}">Çıkış Yap</a></li>
+        </ul>
+    </div>
+
+    <!-- Event List Section -->
+    <div class="event-section">
+        <h2>Tüm Etkinlikler</h2>
+        <div class="event-list">
+            <ul>
+                {% for event in events %}
+                <li>
+                    <a href="{% url 'event_detail' event.id %}">{{ event.name }}</a>
+                    <p>{{ event.date }} - {{ event.location }}</p>
+                </li>
+                {% endfor %}
+            </ul>
+        </div>
+        <a href="{% url 'create_event' %}" class="btn-create-event">Yeni Etkinlik Oluştur</a>
+    </div>
+</body>
+</html>

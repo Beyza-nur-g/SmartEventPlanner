@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;700&display=swap" rel="stylesheet">
+    <title>Akıllı Etkinlik Platformu</title>
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #1e3c72, #2a5298);
+            color: #ffffff;
+            margin: 0;
+            padding: 0;
+            overflow-x: hidden;
+        }
+        .floating-navbar {
+            background: rgba(0, 0, 0, 0.6);
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+            padding: 1rem 2rem;
+            position: fixed;
+            top: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 100;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-radius: 50px;
+            backdrop-filter: blur(15px);
+            width: 80%;
+        }
+        .navbar-logo {
+            font-size: 2.5rem;
+            color: #ffcc00;
+            font-weight: bold;
+            text-decoration: none;
+            transition: transform 0.4s;
+        }
+        .navbar-logo:hover {
+            transform: scale(1.2);
+        }
+        .login-container {
+            margin-top: 10rem;
+            padding: 2rem;
+            background: rgba(255, 255, 255, 0.95);
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+            border-radius: 25px;
+            max-width: 500px;
+            margin-left: auto;
+            margin-right: auto;
+            text-align: center;
+        }
+        .login-container h2 {
+            color: #1e3c72;
+            margin-bottom: 1.5rem;
+        }
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+        .form-group label {
+            display: block;
+            font-size: 1.2rem;
+            color: #333;
+            margin-bottom: 0.5rem;
+        }
+        .form-group input {
+            width: 100%;
+            padding: 0.8rem;
+            font-size: 1.1rem;
+            border-radius: 10px;
+            border: 2px solid #1e3c72;
+            transition: border-color 0.3s;
+        }
+        .form-group input:focus {
+            border-color: #ff6600;
+            outline: none;
+        }
+        button[type="submit"] {
+            background-color: #ff6600;
+            color: #ffffff;
+            padding: 1rem 2rem;
+            border: none;
+            border-radius: 25px;
+            font-size: 1.2rem;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        button[type="submit"]:hover {
+            background-color: #e65c00;
+        }
+        .messages {
+            list-style-type: none;
+            padding: 0;
+            margin-top: 1rem;
+            color: #ff0000;
+        }
+        .messages li {
+            margin-bottom: 0.5rem;
+        }
+        .login-container p {
+            margin-top: 1.5rem;
+            font-size: 1rem;
+            color: #1e3c72;
+        }
+        .login-container a {
+            color: #ff6600;
+            text-decoration: none;
+            font-weight: bold;
+            transition: color 0.3s;
+        }
+        .login-container a:hover {
+            color: #e65c00;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navbar section -->
+    <div class="floating-navbar">
+        <a href="#" class="navbar-logo">✨ Akıllı Etkinlik Platformu</a>
+    </div>
+
+    <!-- Login Section -->
+    <div class="login-container">
+        <h2>Giriş Yap</h2>
+        <form method="post" action="{% url 'login' %}">
+            {% csrf_token %}
+            <div class="form-group">
+                <label for="username">Kullanıcı Adı:</label>
+                <input type="text" id="username" name="username" required>
+            </div>
+            <div class="form-group">
+                <label for="password">Şifre:</label>
+                <input type="password" id="password" name="password" required>
+            </div>
+            <button type="submit">Giriş Yap</button>
+        </form>
+        {% if messages %}
+            <ul class="messages">
+                {% for message in messages %}
+                    <li>{{ message }}</li>
+                {% endfor %}
+            </ul>
+        {% endif %}
+        <p>Henüz hesabınız yok mu? <a href="{% url 'register' %}">Kaydolun</a></p>
+    </div>
+</body>
+</html>

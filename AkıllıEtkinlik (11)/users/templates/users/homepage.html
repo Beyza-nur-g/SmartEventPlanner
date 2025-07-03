@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kullanıcı Konum Haritası ve Akıllı Etkinlik Platformu</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+    <link rel="stylesheet" href="/static/css/style.css">
+    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+    <script src="https://unpkg.com/leaflet-routing-machine/dist/leaflet-routing-machine.min.js"></script>
+    <script src="https://unpkg.com/leaflet-control-geocoder/dist/Control.Geocoder.js"></script>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet-routing-machine/dist/leaflet-routing-machine.css" />
+    <link rel="stylesheet" href="https://unpkg.com/leaflet-control-geocoder/dist/Control.Geocoder.css" />
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #1e3c72, #2a5298);
+            color: #ffffff;
+            margin: 0;
+            padding: 0;
+            overflow-x: hidden;
+        }
+        #map {
+            height: 500px;
+            width: 80%;
+            margin: 3rem auto;
+            border-radius: 20px;
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
+        }
+        #error-message {
+            width: 80%;
+            margin: 1rem auto;
+            color: red;
+            font-weight: bold;
+            text-align: center;
+        }
+        .floating-navbar {
+            background: rgba(0, 0, 0, 0.6);
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+            padding: 1rem 2rem;
+            position: fixed;
+            top: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 100;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-radius: 50px;
+            backdrop-filter: blur(15px);
+            width: 80%;
+        }
+        .navbar-logo {
+            font-size: 2.5rem;
+            color: #ffcc00;
+            font-weight: bold;
+            text-decoration: none;
+            transition: transform 0.4s;
+        }
+        .navbar-logo:hover {
+            transform: scale(1.2);
+        }
+        .menu-items {
+            display: flex;
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+        .menu-items li {
+            margin: 0 1.5rem;
+            transition: transform 0.4s;
+            position: relative;
+        }
+        .menu-items li:hover {
+            transform: translateY(-8px);
+        }
+        .menu-items li a {
+            color: #ffffff;
+            text-decoration: none;
+            font-size: 1.3rem;
+            padding: 0.6rem 1.2rem;
+            border-radius: 30px;
+            transition: background-color 0.4s, color 0.4s;
+        }
+        .menu-items li a:hover {
+            background-color: #ffcc00;
+            color: #000000;
+        }
+        .dropdown {
+            display: none;
+            position: absolute;
+            top: 100%;
+            left: 0;
+            background-color: rgba(0, 0, 0, 0.8);
+            border-radius: 15px;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+            padding: 1rem;
+            z-index: 101;
+        }
+        .menu-items li:hover .dropdown {
+            display: block;
+        }
+        .dropdown a {
+            display: block;
+            color: #ffffff;
+            text-decoration: none;
+            padding: 0.5rem 1rem;
+            border-radius: 10px;
+            transition: background-color 0.3s, color 0.3s;
+        }
+        .dropdown a:hover {
+            background-color: #ffcc00;
+            color: #000000;
+        }
+        .navbar-toggle {
+            display: none;
+        }
+        @media (max-width: 768px) {
+            .menu-items {
+                display: none;
+                flex-direction: column;
+                background-color: rgba(0, 0, 0, 0.8);
+                width: 100%;
+                position: absolute;
+                top: 5rem;
+                left: 0;
+                z-index: 99;
+                border-radius: 15px;
+            }
+            .menu-items li {
+                margin: 1rem 0;
+                text-align: center;
+            }
+            .navbar-toggle {
+                display: block;
+                color: #ffffff;
+                font-size: 2rem;
+                cursor: pointer;
+            }
+            .floating-navbar .menu-items.active {
+                display: flex;
+            }
+        }
+        .event-section {
+            text-align: center;
+            margin-top: 10rem;
+            padding: 2rem;
+        }
+        .event-section h2 {
+            font-size: 3rem;
+            color: #ffcc00;
+            margin-bottom: 2rem;
+            font-family: 'Poppins', sans-serif;
+        }
+        .event-carousel {
+            display: flex;
+            gap: 2rem;
+            overflow-x: auto;
+            scroll-behavior: smooth;
+            padding: 3rem;
+            margin: 2rem auto;
+            max-width: 70%;
+        }
+        .event-carousel::-webkit-scrollbar {
+            height: 10px;
+        }
+        .event-carousel::-webkit-scrollbar-thumb {
+            background-color: #ffcc00;
+            border-radius: 10px;
+        }
+        .event-card {
+            background: linear-gradient(145deg, #ffffff, #e6e6e6);
+            padding: 2rem;
+            border-radius: 25px;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.2);
+            width: calc(25% - 1rem);
+            transition: transform 0.4s;
+            flex: 0 0 auto;
+        }
+        .event-card:hover {
+            transform: scale(1.1);
+        }
+        .event-card h3 {
+            color: #1e3c72;
+            font-size: 1.5rem;
+        }
+        .event-card p {
+            color: #333;
+            font-size: 1rem;
+        }
+        @media (max-width: 1024px) {
+            .event-card {
+                width: calc(40% - 1rem);
+            }
+        }
+        @media (max-width: 768px) {
+            .event-card {
+                width: calc(90% - 1rem);
+            }
+        }
+        .leaflet-routing-container {
+            background-color:  #1e3c72 !important;
+            color: #ffffff !important;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navbar section -->
+    <div class="floating-navbar">
+        <a href="#" class="navbar-logo">✨ Akıllı Etkinlik Platformu</a>
+        <div class="navbar-toggle" onclick="toggleMenu()">
+            &#9776;
+        </div>
+        <ul class="menu-items">
+            <li><a href="{% url 'profile' request.user.id %}" class="active">Profilim</a></li>
+            <li>
+                <a href="#">Etkinlikler</a>
+                <div class="dropdown">
+                    <a href="{% url 'event_list' %}">Tüm Etkinlikler</a>
+                    <a href="{% url 'my_events' %}">Etkinliklerim</a>
+                </div>
+            </li>
+            <li><a href="#">Chat</a></li>
+            <li><a href="{% url 'logout' %}">Çıkış Yap</a></li>
+        </ul>
+    </div>
+
+    <!-- Event List Section -->
+    <div class="event-section">
+        <h2>Güncel Etkinlikler</h2>
+        <div class="event-carousel">
+            {% if past_events.exists %}
+                {% for event in past_events %}
+                    <div class="event-card">
+                        <h3><a href="{% url 'event_detail' event.id %}">{{ event.name }}</a></h3>
+                        <p><strong>Tarih:</strong> {{ event.date }}</p>
+                        <p><strong>Yer:</strong> {{ event.location }}</p>
+                        <p>{{ event.description|truncatewords:20 }}</p>
+                    </div>
+                {% endfor %}
+            {% endif %}
+
+            {% if future_events.exists %}
+                {% for event in future_events %}
+                    <div class="event-card">
+                        <h3><a href="{% url 'event_detail' event.id %}">{{ event.name }}</a></h3>
+                        <p><strong>Tarih:</strong> {{ event.date }}</p>
+                        <p><strong>Yer:</strong> {{ event.location }}</p>
+                        <p>{{ event.description|truncatewords:20 }}</p>
+                    </div>
+                {% endfor %}
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Harita Konteyneri -->
+    <div id="map"></div>
+    <!-- Hata Mesajı Konteyneri -->
+    <div id="error-message"></div>
+
+    <script>
+        function toggleMenu() {
+            const menuItems = document.querySelector('.menu-items');
+            menuItems.classList.toggle('active');
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            // Haritayı başlat
+            const map = L.map('map', {
+                center: [39.92077, 32.85411], // Başlangıç olarak Ankara
+                zoom: 6,
+                zoomControl: true
+            });
+
+            // OpenStreetMap (OSM) harita katmanı ekleyin
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> katkıda bulunanlar'
+            }).addTo(map);
+
+            const errorMessageContainer = document.getElementById('error-message');
+
+            // Kullanıcının konumunu al
+            const latitude = parseFloat("{{ user.latitude }}");
+            const longitude = parseFloat("{{ user.longitude }}");
+            let userMarker;
+            let routingControl;
+
+            if (!isNaN(latitude) && !isNaN(longitude)) {
+                // Haritada kullanıcı konumunu göster
+                userMarker = L.marker([latitude, longitude], {
+                    icon: L.divIcon({
+                        html: '📍',
+                        className: 'emoji-icon',
+                        iconSize: [140, 140],
+                        iconAnchor: [10, 10],
+                        popupAnchor: [0, -40]
+                    })
+                }).addTo(map);
+                userMarker.bindPopup(`<b>Kullanıcı Konumu</b>`).openPopup();
+
+                // Konumu merkeze al
+                map.setView([latitude, longitude], 12);
+            } else {
+                errorMessageContainer.textContent = "Kullanıcı konumu bulunamadı.";
+            }
+
+            // Etkinliklerin konumlarını al ve haritada göster
+            const eventsJson = JSON.parse(`{{ all_events_json|escapejs }}`);
+
+            if (Array.isArray(eventsJson) && eventsJson.length > 0) {
+                eventsJson.forEach(event => {
+                    const eventLatitude = parseFloat(event.position[0]);
+                    const eventLongitude = parseFloat(event.position[1]);
+                    const eventId = event.id;
+
+                    if (!isNaN(eventLatitude) && !isNaN(eventLongitude)) {
+                        const eventMarker = L.marker([eventLatitude, eventLongitude], {
+                            icon: L.divIcon({
+                                html: '🎉',
+                                className: 'emoji-icon',
+                                iconSize: [140, 140],
+                                iconAnchor: [10, 10],
+                                popupAnchor: [0, -40]
+                            })
+                        }).addTo(map);
+                        eventMarker.bindPopup(`<b><a href="/events/${eventId}/">${event.title}</a></b>`);
+
+                        // Kullanıcı konumu varsa rota göster
+                        if (userMarker) {
+                            eventMarker.on('click', function() {
+                                // Önceki rota varsa kaldır
+                                if (routingControl) {
+                                    map.removeControl(routingControl);
+                                }
+                                // Yeni rota oluştur
+                                routingControl = L.Routing.control({
+                                    waypoints: [
+                                        L.latLng(latitude, longitude),
+                                        L.latLng(eventLatitude, eventLongitude)
+                                    ],
+                                    lineOptions: {
+                                        styles: [{ color: '#ffcc00', weight: 6 }]
+                                    },
+                                    createMarker: function() { return null; },
+                                    routeWhileDragging: true,
+                                    geocoder: L.Control.Geocoder.nominatim(),
+                                    show: true,
+                                    addWaypoints: false
+                                }).addTo(map);
+
+                                // Rota açıklaması stilini güncelle
+                                const routingContainer = document.querySelector('.leaflet-routing-container');
+                                if (routingContainer) {
+                                    routingContainer.style.color = '#000000';
+                                }
+                            });
+                        }
+                    }
+                });
+            } else {
+                errorMessageContainer.textContent = "Etkinlik verisi bulunamadı.";
+            }
+        });
+    </script>
+</body>
+</html>

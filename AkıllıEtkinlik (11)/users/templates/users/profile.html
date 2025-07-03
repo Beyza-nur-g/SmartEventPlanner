@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profilim</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #1e3c72, #2a5298);
+            color: #ffffff;
+            margin: 0;
+            padding: 0;
+            overflow-x: hidden;
+        }
+        .floating-navbar {
+            background: rgba(0, 0, 0, 0.6);
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+            padding: 1rem 2rem;
+            position: fixed;
+            top: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 100;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-radius: 50px;
+            backdrop-filter: blur(15px);
+            width: 80%;
+        }
+        .navbar-logo {
+            font-size: 2.5rem;
+            color: #ffcc00;
+            font-weight: bold;
+            text-decoration: none;
+            transition: transform 0.4s;
+        }
+        .navbar-logo:hover {
+            transform: scale(1.2);
+        }
+        .menu-items {
+            display: flex;
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+        .menu-items li {
+            margin: 0 1.5rem;
+            transition: transform 0.4s;
+            position: relative;
+        }
+        .menu-items li:hover {
+            transform: translateY(-8px);
+        }
+        .menu-items li a {
+            color: #ffffff;
+            text-decoration: none;
+            font-size: 1.3rem;
+            padding: 0.6rem 1.2rem;
+            border-radius: 30px;
+            transition: background-color 0.4s, color 0.4s;
+        }
+        .menu-items li a:hover {
+            background-color: #ffcc00;
+            color: #000000;
+        }
+        .dropdown {
+            display: none;
+            position: absolute;
+            top: 100%;
+            left: 0;
+            background-color: rgba(0, 0, 0, 0.8);
+            border-radius: 15px;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+            padding: 1rem;
+            z-index: 101;
+        }
+        .menu-items li:hover .dropdown {
+            display: block;
+        }
+        .dropdown a {
+            display: block;
+            color: #ffffff;
+            text-decoration: none;
+            padding: 0.5rem 1rem;
+            border-radius: 10px;
+            transition: background-color 0.3s, color 0.3s;
+        }
+        .dropdown a:hover {
+            background-color: #ffcc00;
+            color: #000000;
+        }
+        .navbar-toggle {
+            display: none;
+        }
+        @media (max-width: 768px) {
+            .menu-items {
+                display: none;
+                flex-direction: column;
+                background-color: rgba(0, 0, 0, 0.8);
+                width: 100%;
+                position: absolute;
+                top: 5rem;
+                left: 0;
+                z-index: 99;
+                border-radius: 15px;
+            }
+            .menu-items li {
+                margin: 1rem 0;
+                text-align: center;
+            }
+            .navbar-toggle {
+                display: block;
+                color: #ffffff;
+                font-size: 2rem;
+                cursor: pointer;
+            }
+            .floating-navbar .menu-items.active {
+                display: flex;
+            }
+        }
+        .profile-container {
+            margin-top: 10rem;
+            padding: 2rem;
+            background: rgba(255, 255, 255, 0.95);
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+            border-radius: 25px;
+            max-width: 900px;
+            margin-left: auto;
+            margin-right: auto;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            overflow: hidden;
+        }
+        .profile-header {
+            width: 100%;
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+        .profile-header h1 {
+            color: #ff6600;
+            font-size: 3rem;
+            margin-bottom: 0.5rem;
+        }
+        .profile-content {
+            display: flex;
+            align-items: center;
+            width: 100%;
+            flex-wrap: nowrap;
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+        .profile-picture-section {
+            flex-basis: 40%;
+            text-align: center;
+            padding: 2rem;
+            position: relative;
+        }
+        .profile-picture-section img {
+            width: 250px;
+            height: 250px;
+            border-radius: 50%;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+            transition: transform 0.3s;
+            border: 5px solid #5bc0de;
+        }
+        .profile-picture-section img:hover {
+            transform: scale(1.1);
+        }
+        .points-badge {
+            position: absolute;
+            top: 10px;
+            right: 20px;
+            background-color: #ff6600;
+            color: #ffffff;
+            padding: 0.8rem 1.2rem;
+            border-radius: 50px;
+            font-size: 1.4rem;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+            font-weight: bold;
+            transition: transform 0.3s;
+        }
+        .points-badge:hover {
+            transform: scale(1.1);
+        }
+        .profile-details {
+            flex-basis: 60%;
+            padding: 2rem;
+            background: rgba(173, 216, 230, 0.9);
+            border-radius: 25px;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+        }
+        .profile-details p {
+            font-size: 1.4rem;
+            color: #333;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            word-wrap: break-word;
+        }
+        .profile-details p strong {
+            min-width: 150px;
+            display: inline-block;
+            color: #19647a;
+        }
+        .profile-actions {
+            width: 100%;
+            text-align: center;
+            margin-top: 3rem;
+        }
+        .profile-actions a {
+            display: inline-block;
+            background-color: #ff6600;
+            color: #ffffff;
+            padding: 1rem 2rem;
+            margin: 0.5rem;
+            border-radius: 25px;
+            text-decoration: none;
+            font-size: 1.2rem;
+            transition: background-color 0.3s;
+        }
+        .profile-actions a:hover {
+            background-color: #e65c00;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navbar section -->
+    <div class="floating-navbar">
+        <a href="{% url 'homepage' %}" class="navbar-logo">✨ Akıllı Etkinlik Platformu</a>
+        <ul class="menu-items">
+           <li>
+                <a href="#">Etkinlikler</a>
+                <div class="dropdown">
+                    <a href="{% url 'event_list' %}">Tüm Etkinlikler</a>
+                    <a href="{% url 'my_events' %}">Etkinliklerim</a>
+                </div>
+            </li>
+            <li><a href="#">Chat</a></li>
+            <li><a href="{% url 'logout' %}">Çıkış Yap</a></li>
+        </ul>
+    </div>
+
+    <!-- Profile Section -->
+    <div class="profile-container">
+        <div class="profile-header">
+            <h1>{{ user.username }} Profil Bilgileri</h1>
+        </div>
+        <div class="profile-content">
+            <div class="profile-picture-section">
+                {% if user.profile_picture %}
+                    <img src="{{ user.profile_picture.url }}" alt="Profil Fotoğrafı">
+                {% else %}
+                    <img src="/static/images/default_profile.png" alt="Profil Fotoğrafı">
+                {% endif %}
+                <div class="points-badge">
+                    {{ total_points }} Puan
+                </div>
+            </div>
+            <div class="profile-details">
+                <p><strong>Ad:</strong> {{ user.first_name }}</p>
+                <p><strong>Soyad:</strong> {{ user.last_name }}</p>
+                <p><strong>Doğum Tarihi:</strong> {{ user.birth_date }}</p>
+                <p><strong>Cinsiyet:</strong> {{ user.gender }}</p>
+                <p><strong>E-posta Adresi:</strong> {{ user.email }}</p>
+                <p><strong>Telefon Numarası:</strong> {{ user.phone_number }}</p>
+                <p><strong>İlgi Alanları:</strong> {{ user.interests }}</p>
+                <p><strong>Konum:</strong> {{ user.location }}</p>
+                <p><strong>Rol:</strong> {{ user.is_staff|yesno:"Admin,Kullanıcı" }}</p>
+            </div>
+        </div>
+        <div class="profile-actions">
+            <a href="{% url 'edit_profile' user.id %}">Profilimi Düzenle</a>
+            <a href="{% url 'reset_password' %}">Şifre Sıfırla</a>
+        </div>
+    </div>
+</body>
+</html>

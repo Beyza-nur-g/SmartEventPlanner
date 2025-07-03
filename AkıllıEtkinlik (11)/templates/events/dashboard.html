@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard</title>
+    <link rel="stylesheet" href="{% static 'css/dashboard.css' %}">
+</head>
+<body>
+    <header>
+        <nav>
+            <h1>Akıllı Etkinlik Planlama Platformu</h1>
+            <ul>
+                <li><a href="{% url 'dashboard' %}">Ana Sayfa</a></li>
+                <li><a href="{% url 'create_event' %}">Etkinlik Oluştur</a></li>
+                <li><a href="{% url 'profile' %}">Profilim</a></li>
+                <li><a href="{% url 'logout' %}">Çıkış Yap</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main>
+        <section class="event-suggestions">
+            <h2>Kişiselleştirilmiş Etkinlik Önerileri</h2>
+            {% if suggested_events %}
+                <div class="events-list">
+                    {% for event in suggested_events %}
+                        <div class="event">
+                            <h3>{{ event.name }}</h3>
+                            <p>{{ event.description }}</p>
+                            <p><strong>Yer:</strong> {{ event.location }}</p>
+                            <p><strong>Tarih:</strong> {{ event.date }}</p>
+                            <a href="{% url 'event_detail' event.id %}" class="button">Detaylar</a>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <p>Size uygun etkinlik bulunamadı. Yeni etkinlikler oluşturun veya ilgi alanlarınızı güncelleyin.</p>
+            {% endif %}
+        </section>
+    </main>
+
+    <footer>
+        <p>&copy; 2024 Akıllı Etkinlik Planlama Platformu</p>
+    </footer>
+</body>
+</html>
